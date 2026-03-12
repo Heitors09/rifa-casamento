@@ -4,7 +4,7 @@ import { Calendar, Heart, ShieldAlert, Clock, MessageCircle, Eye, EyeOff } from 
 import './index.css';
 
 const TOTAL = 650;
-const WA = '5511999999999';
+const WA = '5585992248448';
 
 export default function App() {
   const [admin, setAdmin] = useState(false);
@@ -101,14 +101,6 @@ export default function App() {
         <div className="max-w-5xl mx-auto px-6 py-12 sm:py-20 text-center relative z-10">
 
           {/* Main Hero Image */}
-          <div className="flex justify-center mb-6">
-            <img
-              src="/heart-hero.png"
-              alt="Coração decorativo com flores"
-              className="w-48 sm:w-64 md:w-80 h-auto object-contain drop-shadow-sm animate-in fade-in zoom-in duration-700"
-            />
-          </div>
-
           <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-gold-500 mb-4">
             Ação Rumo ao Altar
           </p>
