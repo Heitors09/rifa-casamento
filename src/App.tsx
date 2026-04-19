@@ -15,12 +15,26 @@ export default function App() {
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const [taken, setTaken] = useState<number[]>(() => {
-    try { return JSON.parse(localStorage.getItem('rifa') || '[]'); } catch { return []; }
-  });
+  const [taken, setTaken] = useState<number[]>([]);
   const [time, setTime] = useState({ d: 0, h: 0, m: 0, s: 0 });
 
-  useEffect(() => { localStorage.setItem('rifa', JSON.stringify(taken)); }, [taken]);
+  useEffect(() => {
+    const fetchTaken = async () => {
+      const { data, error } = await supabase
+        .from('selectedNumbers')
+        .select('number');
+
+      if (error) {
+        console.error('Erro ao buscar números selecionados:', error);
+        return;
+      }
+
+      if (data) {
+        setTaken(data.map((item: any) => item.number));
+      }
+    };
+    fetchTaken();
+  }, []);
 
   useEffect(() => {
     const target = new Date('2026-07-18T20:00:00').getTime();
@@ -39,9 +53,27 @@ export default function App() {
     return () => clearInterval(id);
   }, []);
 
-  const click = (n: number) => {
+  const click = async (n: number) => {
     if (admin) {
-      setTaken(t => t.includes(n) ? t.filter(x => x !== n) : [...t, n]);
+      const isSelected = taken.includes(n);
+      if (isSelected) {
+        const { error } = await supabase
+          .from('selectedNumbers')
+          .delete()
+          .eq('number', n);
+
+        if (!error) {
+          setTaken(t => t.filter(x => x !== n));
+        }
+      } else {
+        const { error } = await supabase
+          .from('selectedNumbers')
+          .insert({ number: n });
+
+        if (!error) {
+          setTaken(t => [...t, n]);
+        }
+      }
     } else if (!taken.includes(n)) {
       window.open(`https://wa.me/${WA}?text=${encodeURIComponent(`Olá! Eu quero o número ${n} da rifa do casamento de Natanael e Beatriz.`)}`, '_blank');
     }
